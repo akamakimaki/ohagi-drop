@@ -2549,9 +2549,7 @@ body.fever-active .fever-block {
         min-height: 0;
         overflow: hidden;
         padding:
-            max(4px, env(safe-area-inset-top))
-            6px
-            max(5px, env(safe-area-inset-bottom));
+            max(4px, env(safe-area-inset-top)) 6px max(5px, env(safe-area-inset-bottom));
     }
 
     .game-panel {
@@ -2629,11 +2627,9 @@ body.fever-active .fever-block {
         order: 2;
         flex: 0 0 auto;
         width:
-            clamp(
-                178px,
+            clamp(178px,
                 calc((var(--app-height, 100svh) - 186px) / 2),
-                292px
-            );
+                292px);
         max-width: 78vw;
     }
 
@@ -2831,11 +2827,9 @@ body.fever-active .fever-block {
 
     .board-area {
         width:
-            clamp(
-                170px,
+            clamp(170px,
                 calc((var(--app-height, 100svh) - 168px) / 2),
-                262px
-            );
+                262px);
     }
 
     .info-panel {
@@ -2958,9 +2952,7 @@ body.fever-active .fever-block {
         min-height: 0;
 
         padding:
-            max(4px, env(safe-area-inset-top))
-            6px
-            4px;
+            max(4px, env(safe-area-inset-top)) 6px 4px;
 
         overflow: hidden;
     }
@@ -2994,10 +2986,7 @@ body.fever-active .fever-block {
         操作
         */
         grid-template-rows:
-            58px
-            42px
-            minmax(0, 1fr)
-            62px;
+            58px 42px minmax(0, 1fr) 62px;
 
         grid-template-columns: 1fr;
 
@@ -3036,8 +3025,7 @@ body.fever-active .fever-block {
         display: grid;
 
         grid-template-columns:
-            48px
-            minmax(0, 1fr);
+            48px minmax(0, 1fr);
 
         align-items: center;
 
@@ -3088,8 +3076,7 @@ body.fever-active .fever-block {
         display: grid;
 
         grid-template-columns:
-            110px
-            minmax(0, 1fr);
+            110px minmax(0, 1fr);
 
         gap: 12px;
 
@@ -3174,8 +3161,7 @@ body.fever-active .fever-block {
         display: grid !important;
 
         grid-template-columns:
-            minmax(0, 1fr)
-            64px;
+            minmax(0, 1fr) 64px;
 
         gap: 7px;
 
@@ -3227,17 +3213,11 @@ body.fever-active .fever-block {
 
 
 /* 高さが特に短いiPhone */
-@media
-    (max-width: 820px)
-    and
-    (max-height: 700px) {
+@media (max-width: 820px) and (max-height: 700px) {
 
     .game-layout {
         grid-template-rows:
-            48px
-            34px
-            minmax(0, 1fr)
-            52px;
+            48px 34px minmax(0, 1fr) 52px;
     }
 
     .character-panel,
@@ -3253,8 +3233,7 @@ body.fever-active .fever-block {
 
     .character-card {
         grid-template-columns:
-            40px
-            minmax(0, 1fr);
+            40px minmax(0, 1fr);
     }
 
     .speech {
@@ -3268,5 +3247,29 @@ body.fever-active .fever-block {
     .mobile-controls,
     .mobile-controls button {
         height: 50px;
+    }
+}
+
+@media (max-width: 820px) {
+
+    html,
+    body,
+    .game-wrap,
+    .game-panel,
+    .game-layout,
+    .board-area,
+    #gameCanvas,
+    .mobile-controls,
+    .mobile-controls button {
+        touch-action: manipulation !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+
+    #gameCanvas,
+    .mobile-controls {
+        touch-action: none !important;
     }
 }

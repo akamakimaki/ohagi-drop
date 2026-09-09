@@ -3984,36 +3984,26 @@ function cleanupGiyuAttackVisuals() {
 
 function spawnNextPair() {
 
-    if (
-        gameOver
-    ) {
-
+    if (gameOver) {
         return;
     }
 
-    currentPair =
-        nextPair;
+    if (getTopOccupiedRow() <= 1) {
+        triggerGameOver();
+        return;
+    }
 
-    currentPair.x =
-        2;
+    currentPair = nextPair;
 
-    currentPair.y =
-        0;
+    currentPair.x = 2;
+    currentPair.y = 0;
+    currentPair.direction = 2;
 
-    currentPair.direction =
-        2;
-
-    nextPair =
-        createPair();
+    nextPair = createPair();
 
     drawNext();
 
-    if (
-        !canPlace(
-            currentPair
-        )
-    ) {
-
+    if (!canPlace(currentPair)) {
         triggerGameOver();
     }
 }
@@ -4129,7 +4119,7 @@ function triggerGameOver() {
         "よかった";
 
     startGiyuGameOverHearts();
-    
+
     startSanemiGameOverPoya();
 
     if (
@@ -5759,6 +5749,27 @@ document.addEventListener(
         }
     },
 
+    {
+        passive: false
+    }
+);
+
+let lastTouchEnd = 0;
+
+document.addEventListener(
+    "touchend",
+    event => {
+
+        const now = Date.now();
+
+        if (
+            now - lastTouchEnd <= 350
+        ) {
+            event.preventDefault();
+        }
+
+        lastTouchEnd = now;
+    },
     {
         passive: false
     }
