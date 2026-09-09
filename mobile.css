@@ -19,9 +19,7 @@
         height: var(--app-height, 100svh) !important;
         min-height: 0 !important;
         padding:
-            max(4px, env(safe-area-inset-top))
-            6px
-            4px !important;
+            max(4px, env(safe-area-inset-top)) 6px 4px !important;
         overflow: hidden !important;
     }
 
@@ -48,10 +46,7 @@
 
         grid-template-columns: 1fr !important;
         grid-template-rows:
-            52px
-            38px
-            minmax(0, 1fr)
-            62px !important;
+            52px 38px minmax(0, 1fr) 62px !important;
 
         gap: 4px !important;
 
@@ -223,5 +218,69 @@
         -webkit-user-select: none !important;
         -webkit-touch-callout: none !important;
         -webkit-tap-highlight-color: transparent !important;
+    }
+}
+
+@media (max-width: 820px) {
+
+    html,
+    body,
+    .game-wrap,
+    .game-panel,
+    .game-layout,
+    .board-area,
+    #gameCanvas,
+    .mobile-controls,
+    .mobile-controls button {
+        touch-action: none !important;
+        -webkit-user-select: none !important;
+        user-select: none !important;
+        -webkit-touch-callout: none !important;
+        -webkit-tap-highlight-color: transparent !important;
+    }
+
+    .info-panel {
+        display: grid !important;
+        grid-template-columns: 72px minmax(0, 1fr) 54px 62px !important;
+        align-items: center !important;
+        gap: 4px !important;
+    }
+
+    .next-block {
+        display: block !important;
+        width: 54px !important;
+        min-width: 54px !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        text-align: center !important;
+    }
+
+    #nextCanvas {
+        display: block !important;
+        width: 48px !important;
+        height: 48px !important;
+        margin: 0 auto !important;
+    }
+
+    .controls {
+        display: flex !important;
+        width: 62px !important;
+        align-items: center !important;
+        justify-content: center !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    .controls .key-help {
+        display: none !important;
+    }
+
+    #pauseBtn {
+        display: block !important;
+        width: 60px !important;
+        height: 38px !important;
+        padding: 0 !important;
+        font-size: 9px !important;
+        touch-action: none !important;
     }
 }
