@@ -78,6 +78,8 @@ const gameOverPanel =
 const restartBtn =
     document.getElementById("restartBtn");
 
+const blueskyShareBtn = document.getElementById("blueskyShareBtn");
+
 const pausePanel =
     document.getElementById("pausePanel");
 
@@ -5660,6 +5662,28 @@ restartBtn.addEventListener("pointerdown", event => {
     restartGame();
     playBgm();
 });
+
+if (blueskyShareBtn) {
+    blueskyShareBtn.addEventListener("pointerdown", event => {
+        event.preventDefault();
+
+        const gameUrl = "https://akamakimaki.github.io/ohagi-drop/";
+
+        const text = [
+            `おはぎDROPで ${score.toLocaleString()}点！`,
+            `🍃「腹いっぱいだァ…」`,
+            "",
+            "#おはぎDROP",
+            gameUrl
+        ].join("\n");
+
+        const shareUrl =
+            "https://bsky.app/intent/compose?text=" +
+            encodeURIComponent(text);
+
+        window.open(shareUrl, "_blank", "noopener,noreferrer");
+    });
+}
 
 
 // ========================================
