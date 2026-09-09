@@ -409,32 +409,20 @@ function unlockAudio() {
 
 
 function playBgm() {
-
-    if (
-        gameOver ||
-        paused ||
-        !audioUnlocked ||
-        !bgmMain
-    ) {
-
+    if (gameOver || paused || !audioUnlocked || !bgmMain) {
         return;
     }
 
-    bgmMain.volume =
-        0.22;
+    bgmMain.volume = 0.22;
+    bgmMain.loop = true;
 
-    bgmMain.loop =
-        true;
+    const playPromise = bgmMain.play();
 
-    if (
-        !bgmMain.paused
-    ) {
-        return;
+    if (playPromise) {
+        playPromise.catch(error => {
+            console.error("BGM play failed:", error);
+        });
     }
-
-    bgmMain
-        .play()
-        .catch(() => { });
 }
 
 
@@ -5616,40 +5604,47 @@ document.addEventListener(
 // ========================================
 
 function beginFirstGame() {
-
-    if (
-        !waitingForUserStart
-    ) {
-
+    if (!waitingForUserStart) {
         return;
     }
 
-    waitingForUserStart =
-        false;
+    audioUnlocked = true;
 
-    starting =
-        false;
+    if (bgmMain) {
+        bgmMain.volume = 0.22;
+        bgmMain.loop = true;
+        bgmMain.currentTime = 0;
 
-    gameStartTime =
-        performance.now();
+        const playPromise = bgmMain.play();
 
-    lastDropTime =
-        performance.now();
+        if (playPromise) {
+            playPromise.catch(error => {
+                console.error("BGM start failed:", error);
+            });
+        }
+    }
+
+    waitingForUserStart = false;
+    starting = false;
+
+    gameStartTime = performance.now();
+    lastDropTime = performance.now();
 
     scheduleNextGiyuAttack();
 
-    if (
-        startGate
-    ) {
-
-        startGate.classList.add(
-            "hidden"
-        );
+    if (startGate) {
+        startGate.classList.add("hidden");
     }
 
     showStartMessage();
 
-    unlockAudio();
+    if (!audioWarmed) {
+        audioWarmed = true;
+
+        warmAudioElement(clearSe);
+        warmAudioElement(giyuSe);
+        warmAudioElement(gameOverSe);
+    }
 }
 
 
@@ -5753,6 +5748,35 @@ document.addEventListener(
         passive: false
     }
 );
+
+document.addEventListener("gesturestart", event => {
+    event.preventDefault();
+}, { passive: false });
+
+document.addEventListener("gesturechange", event => {
+    event.preventDefault();
+}, { passive: false });
+
+document.addEventListener("gestureend", event => {
+    event.preventDefault();
+}, { passive: false });
+
+let lastTouchEnd = 0;
+
+document.addEventListener("touchend", event => {
+    const now = Date.now();
+
+    if (now - lastTouchEnd <= 400) {
+        event.preventDefault();
+    }
+
+    lastTouchEnd = now;
+}, { passive: false });
+
+document.addEventListener("dblclick", event => {
+    event.preventDefault();
+}, { passive: false });
+
 
 let lastTouchEnd = 0;
 
