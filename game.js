@@ -188,6 +188,10 @@ const gameOverSe =
 const bgmMain =
     document.getElementById("bgmMain");
 
+if (bgmMain) {
+    bgmMain.src = `sounds/bgm_main.mp3?t=${Date.now()}`;
+}
+
 
 let audioUnlocked =
     false;
