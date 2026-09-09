@@ -10,13 +10,26 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>おはぎDROP</title>
 
+    <script>
+        const isIPad =
+            /iPad/.test(navigator.userAgent) ||
+            (
+                navigator.platform === "MacIntel" &&
+                navigator.maxTouchPoints > 1
+            );
+
+        if (isIPad) {
+            document.documentElement.classList.add("ipad-mode");
+        }
+    </script>
+
     <link rel="preload" href="sounds/bgm_main.mp3" as="audio" type="audio/mpeg">
     <link rel="preload" href="sounds/clear.mp3" as="audio" type="audio/mpeg">
     <link rel="preload" href="sounds/giyu.mp3" as="audio" type="audio/mpeg">
     <link rel="preload" href="sounds/gameover.mp3" as="audio" type="audio/mpeg">
 
     <link rel="stylesheet" href="style.css?v=20260909-5">
-    <link rel="stylesheet" href="mobile.css?v=20260909-7">
+    <link rel="stylesheet" href="mobile.css?v=20260909-8">
 </head>
 
 <body>
