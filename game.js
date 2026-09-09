@@ -193,48 +193,6 @@ let audioUnlocked =
 let audioWarmed =
     false;
 
-let bgmAudioContext = null;
-let bgmBuffer = null;
-let bgmSource = null;
-let bgmLoadingPromise = null;
-let bgmStartedAt = 0;
-let bgmPausedOffset = 0;
-
-function prepareBgm() {
-    if (bgmLoadingPromise) {
-        return bgmLoadingPromise;
-    }
-
-    bgmLoadingPromise = fetch("sounds/bgm_main.mp3")
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`BGM HTTP ${response.status}`);
-            }
-
-            return response.arrayBuffer();
-        })
-        .then(arrayBuffer => {
-            if (!bgmAudioContext) {
-                bgmAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-
-            return bgmAudioContext.decodeAudioData(arrayBuffer);
-        })
-        .then(buffer => {
-            bgmBuffer = buffer;
-            return buffer;
-        })
-        .catch(error => {
-            console.error("BGM load failed:", error);
-            bgmLoadingPromise = null;
-            throw error;
-        });
-
-    return bgmLoadingPromise;
-}
-
-prepareBgm();
-
 // ========================================
 // CONSTANT
 // ========================================
@@ -413,109 +371,69 @@ async function warmAudioElement(audio) {
 }
 
 
+function setPlaybackAudioSession() {
+    try {
+        if (navigator.audioSession) {
+            navigator.audioSession.type = "playback";
+        }
+    } catch (_) {
+    }
+}
+
 function unlockAudio() {
     audioUnlocked = true;
+    setPlaybackAudioSession();
 
     if (!audioWarmed) {
         audioWarmed = true;
-
         warmAudioElement(clearSe);
         warmAudioElement(giyuSe);
         warmAudioElement(gameOverSe);
     }
 }
 
-async function ensureBgmAudioContext() {
-    if (!bgmAudioContext) {
-        bgmAudioContext = new (window.AudioContext || window.webkitAudioContext)();
-    }
-
-    if (bgmAudioContext.state === "suspended") {
-        await bgmAudioContext.resume();
-    }
-}
-
-async function playBgm() {
-    if (gameOver || paused || !audioUnlocked) {
+function playBgm() {
+    if (gameOver || paused || !audioUnlocked || !bgmMain) {
         return;
     }
 
-    try {
-        await ensureBgmAudioContext();
+    setPlaybackAudioSession();
+    bgmMain.loop = true;
+    bgmMain.volume = 0.22;
 
-        if (!bgmBuffer) {
-            await prepareBgm();
-        }
+    if (!bgmMain.paused) {
+        return;
+    }
 
-        if (bgmSource) {
-            return;
-        }
-
-        const source = bgmAudioContext.createBufferSource();
-        const gain = bgmAudioContext.createGain();
-
-        source.buffer = bgmBuffer;
-        source.loop = true;
-
-        gain.gain.value = 0.22;
-
-        source.connect(gain);
-        gain.connect(bgmAudioContext.destination);
-
-        const offset = bgmPausedOffset % bgmBuffer.duration;
-
-        source.start(0, offset);
-
-        bgmStartedAt = bgmAudioContext.currentTime - offset;
-        bgmSource = source;
-
-        source.onended = () => {
-            if (bgmSource === source) {
-                bgmSource = null;
-            }
-        };
-    } catch (error) {
-        console.error("BGM play failed:", error);
+    const playPromise = bgmMain.play();
+    if (playPromise) {
+        playPromise.catch(error => {
+            console.error("BGM play failed:", error);
+        });
     }
 }
 
 function pauseBgm() {
-    if (!bgmSource || !bgmAudioContext) {
-        return;
+    if (bgmMain && !bgmMain.paused) {
+        bgmMain.pause();
     }
-
-    bgmPausedOffset =
-        bgmAudioContext.currentTime -
-        bgmStartedAt;
-
-    try {
-        bgmSource.stop();
-    } catch (_) {
-    }
-
-    bgmSource.disconnect();
-    bgmSource = null;
 }
 
 function stopBgm() {
-    if (bgmSource) {
-        try {
-            bgmSource.stop();
-        } catch (_) {
-        }
-
-        bgmSource.disconnect();
-        bgmSource = null;
+    if (!bgmMain) {
+        return;
     }
 
-    bgmPausedOffset = 0;
-    bgmStartedAt = 0;
+    bgmMain.pause();
+    try {
+        bgmMain.currentTime = 0;
+    } catch (_) {
+    }
 }
 
 function updateBgmPitch() {
-    // iPhoneではBGMのplaybackRate変更をしない
+    // iPhone Safari安定性を優先してBGMの速度変更はしない
 }
-
 
 function playClearSe(cleared) {
 
@@ -5627,24 +5545,13 @@ function beginFirstGame() {
     showStartMessage();
 }
 
-if (
-    startGameBtn
-) {
-
-    if (startGameBtn) {
-        startGameBtn.addEventListener("pointerdown", event => {
-            event.preventDefault();
-
-            unlockAudio();
-
-            if (bgmAudioContext && bgmAudioContext.state === "suspended") {
-                bgmAudioContext.resume().catch(() => { });
-            }
-
-            beginFirstGame();
-            playBgm();
-        });
-    }
+if (startGameBtn) {
+    startGameBtn.addEventListener("pointerdown", event => {
+        event.preventDefault();
+        unlockAudio();
+        beginFirstGame();
+        playBgm();
+    });
 }
 
 
@@ -5712,49 +5619,27 @@ if (
 }
 
 
-document.addEventListener(
-    "touchmove",
+const preventGesture = event => {
+    event.preventDefault();
+};
 
-    event => {
+document.addEventListener("gesturestart", preventGesture, { passive: false });
+document.addEventListener("gesturechange", preventGesture, { passive: false });
+document.addEventListener("gestureend", preventGesture, { passive: false });
 
-        if (
-            event.target.closest(
-                ".mobile-controls, #gameCanvas"
-            )
-        ) {
-
-            event.preventDefault();
-        }
-    },
-
-    {
-        passive: false
+let lastTouchEndAt = 0;
+document.addEventListener("touchend", event => {
+    const now = Date.now();
+    if (now - lastTouchEndAt < 450) {
+        event.preventDefault();
     }
-);
+    lastTouchEndAt = now;
+}, { passive: false });
 
-const gameTouchArea = document.querySelector(".game-wrap");
+document.addEventListener("dblclick", event => {
+    event.preventDefault();
+}, { passive: false });
 
-if (gameTouchArea) {
-    gameTouchArea.addEventListener("gesturestart", event => {
-        event.preventDefault();
-    }, { passive: false });
-
-    gameTouchArea.addEventListener("gesturechange", event => {
-        event.preventDefault();
-    }, { passive: false });
-
-    gameTouchArea.addEventListener("gestureend", event => {
-        event.preventDefault();
-    }, { passive: false });
-
-    gameTouchArea.addEventListener("touchmove", event => {
-        event.preventDefault();
-    }, { passive: false });
-
-    gameTouchArea.addEventListener("touchend", event => {
-        event.preventDefault();
-    }, { passive: false });
-}
 
 // ========================================
 // BUTTON
@@ -5775,22 +5660,6 @@ restartBtn.addEventListener("pointerdown", event => {
     restartGame();
     playBgm();
 });
-
-
-restartBtn.addEventListener(
-    "click",
-
-    () => {
-
-        unlockAudio();
-
-        stopBgm();
-
-        restartGame();
-
-        playBgm();
-    }
-);
 
 
 // ========================================
