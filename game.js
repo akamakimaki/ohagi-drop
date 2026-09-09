@@ -5778,26 +5778,6 @@ document.addEventListener("dblclick", event => {
 }, { passive: false });
 
 
-let lastTouchEnd = 0;
-
-document.addEventListener(
-    "touchend",
-    event => {
-
-        const now = Date.now();
-
-        if (
-            now - lastTouchEnd <= 350
-        ) {
-            event.preventDefault();
-        }
-
-        lastTouchEnd = now;
-    },
-    {
-        passive: false
-    }
-);
 
 
 // ========================================
