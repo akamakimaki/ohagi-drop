@@ -5608,22 +5608,7 @@ function beginFirstGame() {
         return;
     }
 
-    audioUnlocked = true;
-
-    if (bgmMain) {
-        bgmMain.volume = 0.22;
-        bgmMain.loop = true;
-        bgmMain.currentTime = 0;
-
-        const playPromise = bgmMain.play();
-
-        if (playPromise) {
-            playPromise.catch(error => {
-                console.error("BGM start failed:", error);
-            });
-        }
-    }
-
+    // 先にゲームを開始状態にする
     waitingForUserStart = false;
     starting = false;
 
@@ -5637,6 +5622,26 @@ function beginFirstGame() {
     }
 
     showStartMessage();
+
+    // 音が失敗してもゲーム開始を止めない
+    audioUnlocked = true;
+
+    if (bgmMain) {
+        try {
+            bgmMain.volume = 0.22;
+            bgmMain.loop = true;
+
+            const playPromise = bgmMain.play();
+
+            if (playPromise) {
+                playPromise.catch(error => {
+                    console.error("BGM start failed:", error);
+                });
+            }
+        } catch (error) {
+            console.error("BGM start exception:", error);
+        }
+    }
 
     if (!audioWarmed) {
         audioWarmed = true;
