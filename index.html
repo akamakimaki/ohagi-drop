@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>おはぎ DROP</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+</head>
+
+
+<body>
+
+    <!-- ==============================
+         START MESSAGE
+    ============================== -->
+
+    <div
+        id="startMessage"
+        class="start-message"
+    >
+        始まるぞォ！
+    </div>
+
+
+    <!-- ==============================
+         WATER FLASH
+    ============================== -->
+
+    <div
+        id="waterFlash"
+        class="water-flash"
+    ></div>
+
+
+    <!-- ==============================
+         WATER PARTICLES
+    ============================== -->
+
+    <div
+        id="waterEffects"
+        class="water-effects"
+    ></div>
+
+
+    <!-- ==============================
+         GIYU FULLSCREEN
+    ============================== -->
+
+    <div
+        id="giyuAttackOverlay"
+        class="giyu-attack-overlay"
+    >
+        <img
+            src="images/giyu-attack.png"
+            alt=""
+        >
+    </div>
+
+
+    <!-- ==============================
+         GIYU WATER MESSAGE
+    ============================== -->
+
+    <div
+        id="giyuAttackMessage"
+        class="giyu-attack-message"
+    >
+
+        <span class="water-slash">
+            ≋
+        </span>
+
+        <span
+            id="giyuAttackMessageText"
+            class="giyu-attack-message-text"
+        >
+            まだまだあるぞ
+        </span>
+
+        <span class="water-slash">
+            ≋
+        </span>
+
+    </div>
+
+
+    <!-- ==============================
+         FEVER MESSAGE
+    ============================== -->
+
+    <div
+        id="feverStartMessage"
+        class="fever-start-message"
+    >
+
+        <span class="ohagi-mark">
+            ●
+        </span>
+
+        <span class="festival-text">
+            おはぎ祭り！！
+        </span>
+
+        <span class="ohagi-mark">
+            ●
+        </span>
+
+    </div>
+
+
+    <!-- ==============================
+         GAME OVER CHARACTER
+    ============================== -->
+
+    <div
+        id="sanemiGameOverOverlay"
+        class="sanemi-gameover-overlay"
+    >
+
+        <img
+            src="images/sanemi-gameover.png"
+            alt=""
+        >
+
+    </div>
+
+
+    <!-- ==============================
+         MAIN
+    ============================== -->
+
+    <main class="game-wrap">
+
+        <section class="game-panel">
+
+
+            <!-- ==============================
+                 TITLE
+            ============================== -->
+
+            <h1 class="game-title">
+
+                <span class="title-ohagi">
+                    おはぎ
+                </span>
+
+                <span class="title-drop">
+                    DROP
+                </span>
+
+            </h1>
+
+
+            <!-- ==============================
+                 GAME LAYOUT
+            ============================== -->
+
+            <div class="game-layout">
+
+
+                <!-- ==============================
+                     CHARACTERS
+                ============================== -->
+
+                <div class="character-panel">
+
+
+                    <!-- ==============================
+                         GIYU
+                    ============================== -->
+
+                    <div class="character-card tomioka-card">
+
+                        <div class="character-face-wrap">
+
+                            <img
+                                id="giyuFace"
+                                class="character-face"
+                                src="images/giyu-normal.png"
+                                alt="義勇"
+                            >
+
+                            <!-- 義勇の❤️など -->
+                            <div
+                                id="giyuEffects"
+                                class="character-effects"
+                            ></div>
+
+                        </div>
+
+                        <div
+                            id="giyuMessage"
+                            class="speech"
+                        >
+                            …
+                        </div>
+
+                    </div>
+
+
+                    <!-- ==============================
+                         SANEMI
+                    ============================== -->
+
+                    <div class="character-card sanemi-card">
+
+                        <div class="character-face-wrap">
+
+                            <img
+                                id="sanemiFace"
+                                class="character-face"
+                                src="images/sanemi-normal.png"
+                                alt="実弥"
+                            >
+
+                            <!--
+                                実弥の
+                                ❤️
+                                💦
+                                💢
+                                ゲームオーバー時のぽやぽや
+                            -->
+                            <div
+                                id="sanemiEffects"
+                                class="character-effects"
+                            ></div>
+
+                        </div>
+
+                        <div
+                            id="sanemiMessage"
+                            class="speech"
+                        >
+                            おはぎィ？
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==============================
+                     BOARD
+                ============================== -->
+
+                <div class="board-area">
+
+                    <canvas
+                        id="gameCanvas"
+                        width="300"
+                        height="600"
+                    ></canvas>
+
+
+                    <div
+                        id="eventMessage"
+                        class="event-message"
+                    ></div>
+
+
+                    <!-- ==============================
+                         PAUSE
+                    ============================== -->
+
+                    <div
+                        id="pausePanel"
+                        class="pause-panel hidden"
+                    >
+
+                        <div class="pause-title">
+                            PAUSE
+                        </div>
+
+                        <div class="pause-text">
+                            ちょっと休憩だァ
+                        </div>
+
+                    </div>
+
+
+                    <!-- ==============================
+                         GAME OVER
+                    ============================== -->
+
+                    <div
+                        id="gameOverPanel"
+                        class="game-over hidden"
+                    >
+
+                        <div class="game-over-text">
+                            腹いっぱいだァ…
+                        </div>
+
+                        <button id="restartBtn">
+                            もう一回
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- ==============================
+                     HUD
+                ============================== -->
+
+                <aside class="info-panel">
+
+
+                    <!-- ==============================
+                         SCORE
+                    ============================== -->
+
+                    <section class="hud-block score-block">
+
+                        <div class="hud-label">
+                            SCORE
+                        </div>
+
+                        <div
+                            id="score"
+                            class="score-value"
+                        >
+                            0
+                        </div>
+
+                    </section>
+
+
+                    <!-- ==============================
+                         FEVER
+                    ============================== -->
+
+                    <section class="hud-block fever-block">
+
+                        <div class="fever-header">
+
+                            <span class="hud-label">
+                                FEVER
+                            </span>
+
+                            <strong id="feverValue">
+                                0%
+                            </strong>
+
+                        </div>
+
+                        <div class="fever-bar">
+
+                            <div
+                                id="feverBarFill"
+                                class="fever-bar-fill"
+                            ></div>
+
+                        </div>
+
+                    </section>
+
+
+                    <!-- ==============================
+                         NEXT
+                    ============================== -->
+
+                    <section class="hud-block next-block">
+
+                        <div class="hud-label">
+                            NEXT
+                        </div>
+
+                        <canvas
+                            id="nextCanvas"
+                            width="120"
+                            height="120"
+                        ></canvas>
+
+                    </section>
+
+
+                    <!-- ==============================
+                         CONTROL
+                    ============================== -->
+
+                    <section class="controls">
+
+                        <button
+                            id="pauseBtn"
+                            class="pause-btn"
+                        >
+                            PAUSE
+                        </button>
+
+                        <div class="key-help">
+
+                            <span>
+                                ← →
+                            </span>
+
+                            移動
+
+                        </div>
+
+                        <div class="key-help">
+
+                            <span>
+                                ↓
+                            </span>
+
+                            落下
+
+                        </div>
+
+                        <div class="key-help">
+
+                            <span>
+                                ↑ / Space
+                            </span>
+
+                            回転
+
+                        </div>
+
+                    </section>
+
+                </aside>
+
+            </div>
+
+
+            <!-- ==============================
+                 MOBILE CONTROLS
+            ============================== -->
+
+            <div class="mobile-controls">
+
+                <button
+                    data-action="left"
+                    aria-label="左へ移動"
+                >
+                    ←
+                </button>
+
+                <button
+                    data-action="down"
+                    aria-label="下へ移動"
+                >
+                    ↓
+                </button>
+
+                <button
+                    data-action="right"
+                    aria-label="右へ移動"
+                >
+                    →
+                </button>
+
+                <button
+                    data-action="rotate"
+                    class="rotate-button"
+                    aria-label="回転"
+                >
+                    ↻
+                </button>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ==============================
+         AUDIO
+    ============================== -->
+
+    <audio
+        id="clearSe"
+        src="sounds/clear.mp3"
+        preload="auto"
+    ></audio>
+
+    <audio
+        id="giyuSe"
+        src="sounds/giyu.mp3"
+        preload="auto"
+    ></audio>
+
+    <audio
+        id="gameOverSe"
+        src="sounds/gameover.mp3"
+        preload="auto"
+    ></audio>
+
+    <audio
+        id="bgmMain"
+        src="sounds/bgm_main.mp3"
+        preload="auto"
+    ></audio>
+
+
+    <!-- ==============================
+         SCRIPT
+    ============================== -->
+
+    <script src="game.js"></script>
+
+</body>
+
+</html>
