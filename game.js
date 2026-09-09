@@ -84,6 +84,12 @@ const pausePanel =
 const pauseBtn =
     document.getElementById("pauseBtn");
 
+const startGate =
+    document.getElementById("startGate");
+
+const startGameBtn =
+    document.getElementById("startGameBtn");
+
 
 // ========================================
 // CHARACTER IMAGES
@@ -184,6 +190,9 @@ const bgmMain =
 let audioUnlocked =
     false;
 
+let audioWarmed =
+    false;
+
 
 // ========================================
 // CONSTANT
@@ -275,6 +284,9 @@ let paused =
 let starting =
     false;
 
+let waitingForUserStart =
+    true;
+
 let lastDropTime =
     0;
 
@@ -308,35 +320,91 @@ let sanemiEffectMode =
 let sanemiEffectTimer =
     null;
 
-
-// ========================================
-// GAME OVER EFFECT TIMERS
-// ゲームオーバー中だけ繰り返すエフェクト
-// ========================================
-
 let giyuGameOverHeartTimer =
     null;
 
 let sanemiGameOverPoyaTimer =
     null;
 
-
 // ========================================
 // AUDIO CONTROL
 // ========================================
+
+async function warmAudioElement(audio) {
+
+    if (!audio) {
+        return;
+    }
+
+    const oldVolume =
+        audio.volume;
+
+    const oldMuted =
+        audio.muted;
+
+    try {
+
+        audio.muted =
+            true;
+
+        audio.volume =
+            0;
+
+        audio.currentTime =
+            0;
+
+        await audio.play();
+
+        audio.pause();
+
+        audio.currentTime =
+            0;
+
+    } catch (_) {
+        // Safariで無音ウォームアップできない要素があっても続行
+    }
+
+    audio.muted =
+        oldMuted;
+
+    audio.volume =
+        oldVolume;
+}
+
 
 function unlockAudio() {
 
     if (
         audioUnlocked
     ) {
+
+        playBgm();
         return;
     }
 
     audioUnlocked =
         true;
 
+    /*
+    iPhone Safari では audio.play() の Promise を
+    開始処理で await すると、読み込み待ちでゲーム開始自体が
+    止まることがある。
+
+    先に BGM を開始し、SE のウォームアップは非同期で流す。
+    */
     playBgm();
+
+    if (
+        !audioWarmed
+    ) {
+
+        audioWarmed =
+            true;
+
+        warmAudioElement(clearSe);
+        warmAudioElement(giyuSe);
+        warmAudioElement(gameOverSe);
+    }
 }
 
 
@@ -563,6 +631,8 @@ function clearSanemiEffects() {
         sanemiEffects.innerHTML =
             "";
     }
+
+
 }
 
 
@@ -803,7 +873,6 @@ function setSanemiEffectMode(mode) {
             interval
         );
 }
-
 
 // ========================================
 // WATER EFFECT
@@ -1938,7 +2007,6 @@ function showFeverSparkles(
     }
 }
 
-
 function jumpSanemiOnFever() {
 
     if (
@@ -2147,7 +2215,7 @@ function getSubPosition(pair) {
 
     const d =
         directions[
-            pair.direction
+        pair.direction
         ];
 
     return {
@@ -3262,7 +3330,6 @@ function restoreCharacters() {
         giyuMessage.textContent =
             "よかった";
 
-        // FEVER中は控えめに❤️
         showGiyuHeartBurst(
             2
         );
@@ -3626,11 +3693,6 @@ async function maybeGiyuAttack() {
 
     triggerWaterFlash();
 
-    // ========================================
-    // WATER SPLASH 1
-    // 盤面中央から大きくバシャッ
-    // ========================================
-
     burstWaterAroundBoard(
         42
     );
@@ -3660,11 +3722,6 @@ async function maybeGiyuAttack() {
             "show"
         );
     }
-
-    // ========================================
-    // WATER SPLASH 2
-    // 水しぶき3連発
-    // ========================================
 
     spawnWaterBurst(
         window.innerWidth /
@@ -3829,11 +3886,6 @@ async function maybeGiyuAttack() {
             ) *
             scale;
 
-        // ========================================
-        // LANDING SPLASH
-        // おはぎ着地時にも小さくバシャッ
-        // ========================================
-
         createWaterBurst(
             burstX,
             burstY,
@@ -3861,7 +3913,7 @@ async function maybeGiyuAttack() {
 
     sanemiMessage.textContent =
         dangerLevel ===
-        DANGER_HIGH
+            DANGER_HIGH
 
             ? "もういらねェ！！"
 
@@ -4076,13 +4128,8 @@ function triggerGameOver() {
     giyuMessage.textContent =
         "よかった";
 
-    // ========================================
-    // GAME OVER LOOP EFFECT START
-    // 義勇❤️ + 実弥ぽやぽやをゲームオーバー中ずっと出す
-    // ========================================
-
     startGiyuGameOverHearts();
-
+    
     startSanemiGameOverPoya();
 
     if (
@@ -4134,7 +4181,7 @@ async function animateGiyuDrop(
 
     const duration =
         dangerLevel ===
-        DANGER_HIGH
+            DANGER_HIGH
 
             ? 420
             : 520;
@@ -4307,9 +4354,9 @@ async function animateClear(cells) {
 
                     const type =
                         board[
-                            cell.y
+                        cell.y
                         ][
-                            cell.x
+                        cell.x
                         ];
 
                     if (
@@ -4320,45 +4367,33 @@ async function animateClear(cells) {
                         continue;
                     }
 
-                    const cx =
-                        cell.x *
-                        CELL +
-                        CELL /
-                        2;
-
-                    const cy =
-                        cell.y *
-                        CELL +
-                        CELL /
-                        2;
-
                     const scale =
-                        progress <
-                        0.34
-
-                            ? 1 +
+                        1 +
+                        Math.sin(
                             progress *
-                            1.12
+                            Math.PI
+                        ) *
+                        0.35;
 
-                            : Math.max(
-                                0,
-
-                                1.38 *
-                                (
-                                    1 -
-                                    (
-                                        progress -
-                                        0.34
-                                    ) /
-                                    0.66
-                                )
-                            );
+                    const alpha =
+                        1 -
+                        progress;
 
                     ctx.save();
 
+                    ctx.globalAlpha =
+                        alpha;
+
                     ctx.translate(
-                        cx,
-                        cy
+                        cell.x *
+                        CELL +
+                        CELL /
+                        2,
+
+                        cell.y *
+                        CELL +
+                        CELL /
+                        2
                     );
 
                     ctx.scale(
@@ -4366,37 +4401,10 @@ async function animateClear(cells) {
                         scale
                     );
 
-                    ctx.translate(
-                        -cx,
-                        -cy
-                    );
-
-                    ctx.globalAlpha =
-                        progress <
-                        0.44
-
-                            ? 1
-
-                            : Math.max(
-                                0,
-
-                                1 -
-                                (
-                                    progress -
-                                    0.44
-                                ) /
-                                0.56
-                            );
-
                     drawOhagi(
                         ctx,
-
-                        cell.x *
-                        CELL,
-
-                        cell.y *
-                        CELL,
-
+                        -CELL / 2,
+                        -CELL / 2,
                         type
                     );
 
@@ -4425,8 +4433,6 @@ async function animateClear(cells) {
     );
 }
 
-
-// ========================================
 // DRAW OHAGI
 // ========================================
 
@@ -4613,7 +4619,7 @@ function drawOhagi(
 
                 context.fillStyle =
                     i % 2 ===
-                    0
+                        0
 
                         ? "#f4df9e"
                         : "#c99530";
@@ -4663,7 +4669,7 @@ function drawOhagi(
 
             context.fillStyle =
                 lump[0] >
-                0
+                    0
 
                     ? "#b8d97a"
                     : "#6e9239";
@@ -4726,7 +4732,7 @@ function drawOhagi(
 
                 context.fillStyle =
                     i % 3 ===
-                    0
+                        0
 
                         ? "#dddddd"
                         : "#999999";
@@ -5033,7 +5039,8 @@ function update(
     if (
         !gameOver &&
         !paused &&
-        !starting
+        !starting &&
+        !waitingForUserStart
     ) {
 
         updateDifficulty();
@@ -5043,6 +5050,7 @@ function update(
         !gameOver &&
         !paused &&
         !starting &&
+        !waitingForUserStart &&
         !resolving &&
         currentPair
     ) {
@@ -5115,7 +5123,6 @@ function sleep(ms) {
     );
 }
 
-
 // ========================================
 // RESTART
 // ========================================
@@ -5154,11 +5161,6 @@ function restartGame() {
     );
 
     clearReactionTimer();
-
-    // ========================================
-    // GAME OVER LOOP EFFECT STOP
-    // リスタート時にゲームオーバー演出を全部止める
-    // ========================================
 
     stopGiyuGameOverHearts();
 
@@ -5273,7 +5275,12 @@ function restartGame() {
 
     draw();
 
-    showStartMessage();
+    if (
+        !waitingForUserStart
+    ) {
+
+        showStartMessage();
+    }
 
     if (
         audioUnlocked
@@ -5286,7 +5293,8 @@ function restartGame() {
         () => {
 
             if (
-                gameOver
+                gameOver ||
+                waitingForUserStart
             ) {
 
                 return;
@@ -5370,6 +5378,13 @@ document.addEventListener(
     "keydown",
 
     event => {
+
+        if (
+            waitingForUserStart
+        ) {
+
+            return;
+        }
 
         unlockAudio();
 
@@ -5475,7 +5490,8 @@ function stopMobileRepeat() {
 function performMobileAction(action) {
 
     if (
-        starting
+        starting ||
+        waitingForUserStart
     ) {
 
         return;
@@ -5571,12 +5587,12 @@ document
                                         action ===
                                             "down"
 
-                                            ? 75
-                                            : 115
+                                            ? 65
+                                            : 95
                                     );
 
                             },
-                            260
+                            190
                         );
                 }
             );
@@ -5602,6 +5618,150 @@ document
 document.addEventListener(
     "pointerup",
     stopMobileRepeat
+);
+
+
+// ========================================
+// FIRST START / iOS AUDIO GATE
+// ========================================
+
+function beginFirstGame() {
+
+    if (
+        !waitingForUserStart
+    ) {
+
+        return;
+    }
+
+    waitingForUserStart =
+        false;
+
+    starting =
+        false;
+
+    gameStartTime =
+        performance.now();
+
+    lastDropTime =
+        performance.now();
+
+    scheduleNextGiyuAttack();
+
+    if (
+        startGate
+    ) {
+
+        startGate.classList.add(
+            "hidden"
+        );
+    }
+
+    showStartMessage();
+
+    unlockAudio();
+}
+
+
+if (
+    startGameBtn
+) {
+
+    startGameBtn.addEventListener(
+        "click",
+
+        event => {
+
+            event.preventDefault();
+
+            beginFirstGame();
+        }
+    );
+}
+
+
+// ========================================
+// MOBILE VIEWPORT / SAFARI
+// ========================================
+
+function syncAppHeight() {
+
+    const viewportHeight =
+        window.visualViewport
+            ? window.visualViewport.height
+            : window.innerHeight;
+
+    document.documentElement.style.setProperty(
+        "--app-height",
+        `${Math.round(viewportHeight)}px`
+    );
+}
+
+
+syncAppHeight();
+
+
+window.addEventListener(
+    "resize",
+    syncAppHeight,
+    {
+        passive: true
+    }
+);
+
+
+window.addEventListener(
+    "orientationchange",
+    () => {
+
+        setTimeout(
+            syncAppHeight,
+            120
+        );
+
+        setTimeout(
+            syncAppHeight,
+            420
+        );
+    },
+    {
+        passive: true
+    }
+);
+
+
+if (
+    window.visualViewport
+) {
+
+    window.visualViewport.addEventListener(
+        "resize",
+        syncAppHeight,
+        {
+            passive: true
+        }
+    );
+}
+
+
+document.addEventListener(
+    "touchmove",
+
+    event => {
+
+        if (
+            event.target.closest(
+                ".mobile-controls, #gameCanvas"
+            )
+        ) {
+
+            event.preventDefault();
+        }
+    },
+
+    {
+        passive: false
+    }
 );
 
 
@@ -5642,6 +5802,21 @@ restartBtn.addEventListener(
 // ========================================
 
 restartGame();
+
+waitingForUserStart =
+    true;
+
+starting =
+    true;
+
+if (
+    startGate
+) {
+
+    startGate.classList.remove(
+        "hidden"
+    );
+}
 
 requestAnimationFrame(
     update

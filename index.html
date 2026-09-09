@@ -1,534 +1,142 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+    <meta name="theme-color" content="#dcebcf">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>おはぎDROP</title>
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-    >
+    <link rel="preload" href="sounds/bgm_main.mp3" as="audio" type="audio/mpeg">
+    <link rel="preload" href="sounds/clear.mp3" as="audio" type="audio/mpeg">
+    <link rel="preload" href="sounds/giyu.mp3" as="audio" type="audio/mpeg">
+    <link rel="preload" href="sounds/gameover.mp3" as="audio" type="audio/mpeg">
 
-    <title>おはぎ DROP</title>
-
-    <link
-        rel="preconnect"
-        href="https://fonts.googleapis.com"
-    >
-
-    <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossorigin
-    >
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@500;700;900&display=swap"
-        rel="stylesheet"
-    >
-
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+    <link rel="stylesheet" href="style.css">
 </head>
-
-
 <body>
-
-    <!-- ==============================
-         START MESSAGE
-    ============================== -->
-
-    <div
-        id="startMessage"
-        class="start-message"
-    >
-        始まるぞォ！
+    <div id="startGate" class="start-gate">
+        <div class="start-gate-card">
+            <p class="start-gate-title">おはぎDROP</p>
+            <p class="start-gate-note">最初にタップすると音を準備してから始まります</p>
+            <button id="startGameBtn" class="start-game-btn" type="button">はじめる</button>
+        </div>
     </div>
-
-
-    <!-- ==============================
-         WATER FLASH
-    ============================== -->
-
-    <div
-        id="waterFlash"
-        class="water-flash"
-    ></div>
-
-
-    <!-- ==============================
-         WATER PARTICLES
-    ============================== -->
-
-    <div
-        id="waterEffects"
-        class="water-effects"
-    ></div>
-
-
-    <!-- ==============================
-         GIYU FULLSCREEN
-    ============================== -->
-
-    <div
-        id="giyuAttackOverlay"
-        class="giyu-attack-overlay"
-    >
-        <img
-            src="images/giyu-attack.png"
-            alt=""
-        >
-    </div>
-
-
-    <!-- ==============================
-         GIYU WATER MESSAGE
-    ============================== -->
-
-    <div
-        id="giyuAttackMessage"
-        class="giyu-attack-message"
-    >
-
-        <span class="water-slash">
-            ≋
-        </span>
-
-        <span
-            id="giyuAttackMessageText"
-            class="giyu-attack-message-text"
-        >
-            まだまだあるぞ
-        </span>
-
-        <span class="water-slash">
-            ≋
-        </span>
-
-    </div>
-
-
-    <!-- ==============================
-         FEVER MESSAGE
-    ============================== -->
-
-    <div
-        id="feverStartMessage"
-        class="fever-start-message"
-    >
-
-        <span class="ohagi-mark">
-            ●
-        </span>
-
-        <span class="festival-text">
-            おはぎ祭り！！
-        </span>
-
-        <span class="ohagi-mark">
-            ●
-        </span>
-
-    </div>
-
-
-    <!-- ==============================
-         GAME OVER CHARACTER
-    ============================== -->
-
-    <div
-        id="sanemiGameOverOverlay"
-        class="sanemi-gameover-overlay"
-    >
-
-        <img
-            src="images/sanemi-gameover.png"
-            alt=""
-        >
-
-    </div>
-
-
-    <!-- ==============================
-         MAIN
-    ============================== -->
 
     <main class="game-wrap">
-
-        <section class="game-panel">
-
-
-            <!-- ==============================
-                 TITLE
-            ============================== -->
-
+        <section class="game-panel" aria-label="おはぎDROP">
             <h1 class="game-title">
-
-                <span class="title-ohagi">
-                    おはぎ
-                </span>
-
-                <span class="title-drop">
-                    DROP
-                </span>
-
+                <span class="title-ohagi">おはぎ</span>
+                <span class="title-drop">DROP</span>
             </h1>
 
-
-            <!-- ==============================
-                 GAME LAYOUT
-            ============================== -->
-
             <div class="game-layout">
-
-
-                <!-- ==============================
-                     CHARACTERS
-                ============================== -->
-
-                <div class="character-panel">
-
-
-                    <!-- ==============================
-                         GIYU
-                    ============================== -->
-
+                <aside class="character-panel">
                     <div class="character-card tomioka-card">
-
                         <div class="character-face-wrap">
-
-                            <img
-                                id="giyuFace"
-                                class="character-face"
-                                src="images/giyu-normal.png"
-                                alt="義勇"
-                            >
-
-                            <!-- 義勇の❤️など -->
-                            <div
-                                id="giyuEffects"
-                                class="character-effects"
-                            ></div>
-
+                            <img id="giyuFace" class="character-face" src="images/giyu-normal.png" alt="義勇">
+                            <div id="giyuEffects" class="character-effects" aria-hidden="true"></div>
                         </div>
-
-                        <div
-                            id="giyuMessage"
-                            class="speech"
-                        >
-                            …
-                        </div>
-
+                        <div id="giyuMessage" class="speech">…</div>
                     </div>
 
-
-                    <!-- ==============================
-                         SANEMI
-                    ============================== -->
-
-                    <div class="character-card sanemi-card">
-
+                    <div class="character-card">
                         <div class="character-face-wrap">
-
-                            <img
-                                id="sanemiFace"
-                                class="character-face"
-                                src="images/sanemi-normal.png"
-                                alt="実弥"
-                            >
-
-                            <!--
-                                実弥の
-                                ❤️
-                                💦
-                                💢
-                                ゲームオーバー時のぽやぽや
-                            -->
-                            <div
-                                id="sanemiEffects"
-                                class="character-effects"
-                            ></div>
-
+                            <img id="sanemiFace" class="character-face" src="images/sanemi-normal.png" alt="実弥">
+                            <div id="sanemiEffects" class="character-effects" aria-hidden="true"></div>
                         </div>
-
-                        <div
-                            id="sanemiMessage"
-                            class="speech"
-                        >
-                            おはぎィ？
-                        </div>
-
+                        <div id="sanemiMessage" class="speech">おはぎィ？</div>
                     </div>
-
-                </div>
-
-
-                <!-- ==============================
-                     BOARD
-                ============================== -->
-
-                <div class="board-area">
-
-                    <canvas
-                        id="gameCanvas"
-                        width="300"
-                        height="600"
-                    ></canvas>
-
-
-                    <div
-                        id="eventMessage"
-                        class="event-message"
-                    ></div>
-
-
-                    <!-- ==============================
-                         PAUSE
-                    ============================== -->
-
-                    <div
-                        id="pausePanel"
-                        class="pause-panel hidden"
-                    >
-
-                        <div class="pause-title">
-                            PAUSE
-                        </div>
-
-                        <div class="pause-text">
-                            ちょっと休憩だァ
-                        </div>
-
-                    </div>
-
-
-                    <!-- ==============================
-                         GAME OVER
-                    ============================== -->
-
-                    <div
-                        id="gameOverPanel"
-                        class="game-over hidden"
-                    >
-
-                        <div class="game-over-text">
-                            腹いっぱいだァ…
-                        </div>
-
-                        <button id="restartBtn">
-                            もう一回
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- ==============================
-                     HUD
-                ============================== -->
-
-                <aside class="info-panel">
-
-
-                    <!-- ==============================
-                         SCORE
-                    ============================== -->
-
-                    <section class="hud-block score-block">
-
-                        <div class="hud-label">
-                            SCORE
-                        </div>
-
-                        <div
-                            id="score"
-                            class="score-value"
-                        >
-                            0
-                        </div>
-
-                    </section>
-
-
-                    <!-- ==============================
-                         FEVER
-                    ============================== -->
-
-                    <section class="hud-block fever-block">
-
-                        <div class="fever-header">
-
-                            <span class="hud-label">
-                                FEVER
-                            </span>
-
-                            <strong id="feverValue">
-                                0%
-                            </strong>
-
-                        </div>
-
-                        <div class="fever-bar">
-
-                            <div
-                                id="feverBarFill"
-                                class="fever-bar-fill"
-                            ></div>
-
-                        </div>
-
-                    </section>
-
-
-                    <!-- ==============================
-                         NEXT
-                    ============================== -->
-
-                    <section class="hud-block next-block">
-
-                        <div class="hud-label">
-                            NEXT
-                        </div>
-
-                        <canvas
-                            id="nextCanvas"
-                            width="120"
-                            height="120"
-                        ></canvas>
-
-                    </section>
-
-
-                    <!-- ==============================
-                         CONTROL
-                    ============================== -->
-
-                    <section class="controls">
-
-                        <button
-                            id="pauseBtn"
-                            class="pause-btn"
-                        >
-                            PAUSE
-                        </button>
-
-                        <div class="key-help">
-
-                            <span>
-                                ← →
-                            </span>
-
-                            移動
-
-                        </div>
-
-                        <div class="key-help">
-
-                            <span>
-                                ↓
-                            </span>
-
-                            落下
-
-                        </div>
-
-                        <div class="key-help">
-
-                            <span>
-                                ↑ / Space
-                            </span>
-
-                            回転
-
-                        </div>
-
-                    </section>
-
                 </aside>
 
+                <section class="board-area">
+                    <canvas id="gameCanvas" width="300" height="600" aria-label="ゲーム盤"></canvas>
+
+                    <div id="eventMessage" class="event-message" aria-live="polite"></div>
+
+                    <div id="pausePanel" class="pause-panel hidden">
+                        <div class="pause-title">PAUSE</div>
+                        <div class="pause-text">休憩中</div>
+                    </div>
+
+                    <div id="gameOverPanel" class="game-over hidden">
+                        <div class="game-over-text">腹いっぱいだァ…</div>
+                        <button id="restartBtn" type="button">もう一回</button>
+                    </div>
+                </section>
+
+                <aside class="info-panel">
+                    <div class="hud-block score-block">
+                        <div class="hud-label">SCORE</div>
+                        <div id="score" class="score-value">0</div>
+                    </div>
+
+                    <div class="hud-block fever-block">
+                        <div class="fever-header">
+                            <div class="hud-label">FEVER</div>
+                            <div id="feverValue">0%</div>
+                        </div>
+                        <div class="fever-bar">
+                            <div id="feverBarFill" class="fever-bar-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="hud-block next-block">
+                        <div class="hud-label">NEXT</div>
+                        <canvas id="nextCanvas" width="108" height="108"></canvas>
+                    </div>
+
+                    <div class="controls">
+                        <button id="pauseBtn" class="pause-btn" type="button">PAUSE</button>
+                        <div class="key-help"><span>← →</span>移動</div>
+                        <div class="key-help"><span>↓</span>落とす</div>
+                        <div class="key-help"><span>↑ / SPACE</span>回転</div>
+                    </div>
+                </aside>
             </div>
 
-
-            <!-- ==============================
-                 MOBILE CONTROLS
-            ============================== -->
-
-            <div class="mobile-controls">
-
-                <button
-                    data-action="left"
-                    aria-label="左へ移動"
-                >
-                    ←
-                </button>
-
-                <button
-                    data-action="down"
-                    aria-label="下へ移動"
-                >
-                    ↓
-                </button>
-
-                <button
-                    data-action="right"
-                    aria-label="右へ移動"
-                >
-                    →
-                </button>
-
-                <button
-                    data-action="rotate"
-                    class="rotate-button"
-                    aria-label="回転"
-                >
-                    ↻
-                </button>
-
+            <div class="mobile-controls" aria-label="スマホ操作">
+                <div class="move-pad">
+                    <button type="button" data-action="left" aria-label="左">←</button>
+                    <button type="button" data-action="down" aria-label="下">↓</button>
+                    <button type="button" data-action="right" aria-label="右">→</button>
+                </div>
+                <button class="rotate-button" type="button" data-action="rotate" aria-label="回転">↻</button>
             </div>
-
         </section>
-
     </main>
 
+    <div id="startMessage" class="start-message">始まるぞォ！</div>
 
-    <!-- ==============================
-         AUDIO
-    ============================== -->
+    <div id="waterFlash" class="water-flash" aria-hidden="true"></div>
+    <div id="waterEffects" class="water-effects" aria-hidden="true"></div>
 
-    <audio
-        id="clearSe"
-        src="sounds/clear.mp3"
-        preload="auto"
-    ></audio>
+    <div id="giyuAttackOverlay" class="giyu-attack-overlay" aria-hidden="true">
+        <img src="images/giyu-attack.png" alt="">
+    </div>
 
-    <audio
-        id="giyuSe"
-        src="sounds/giyu.mp3"
-        preload="auto"
-    ></audio>
+    <div id="giyuAttackMessage" class="giyu-attack-message" aria-hidden="true">
+        <span class="water-slash">≋</span>
+        <span id="giyuAttackMessageText" class="giyu-attack-message-text">追加だ</span>
+        <span class="water-slash">≋</span>
+    </div>
 
-    <audio
-        id="gameOverSe"
-        src="sounds/gameover.mp3"
-        preload="auto"
-    ></audio>
+    <div id="feverStartMessage" class="fever-start-message" aria-hidden="true">
+        <span class="ohagi-mark">●</span>
+        <span class="festival-text">おはぎ祭り！！</span>
+        <span class="ohagi-mark">●</span>
+    </div>
 
-    <audio
-        id="bgmMain"
-        src="sounds/bgm_main.mp3"
-        preload="auto"
-    ></audio>
+    <div id="sanemiGameOverOverlay" class="sanemi-gameover-overlay" aria-hidden="true">
+        <img src="images/sanemi-gameover.png" alt="">
+    </div>
 
-
-    <!-- ==============================
-         SCRIPT
-    ============================== -->
+    <audio id="bgmMain" src="sounds/bgm_main.mp3" preload="auto"></audio>
+    <audio id="clearSe" src="sounds/clear.mp3" preload="auto"></audio>
+    <audio id="giyuSe" src="sounds/giyu.mp3" preload="auto"></audio>
+    <audio id="gameOverSe" src="sounds/gameover.mp3" preload="auto"></audio>
 
     <script src="game.js"></script>
-
 </body>
-
 </html>
