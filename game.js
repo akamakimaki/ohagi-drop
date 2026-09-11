@@ -5622,7 +5622,7 @@ restartBtn.addEventListener("pointerdown", event => {
 });
 
 if (blueskyShareBtn) {
-    blueskyShareBtn.addEventListener("pointerdown", event => {
+    blueskyShareBtn.addEventListener("click", event => {
         event.preventDefault();
 
         const sharePageUrl =
@@ -5630,7 +5630,7 @@ if (blueskyShareBtn) {
 
         const text = [
             `おはぎDROPで ${score.toLocaleString()}点！`,
-            `🍃「腹いっぱいだァ…」`,
+            `腹いっぱいだァ…`,
             "",
             "#おはぎDROP",
             sharePageUrl
