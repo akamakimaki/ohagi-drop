@@ -3692,3 +3692,43 @@ body.fever-active .fever-block {
 .bluesky-share-btn:active {
     transform: scale(0.97);
 }
+
+/* ========================================
+   SHORT DESKTOP WINDOW
+   高さが足りないPCブラウザ用
+======================================== */
+
+@media (min-width: 821px) and (max-height: 900px) and (hover: hover) and (pointer: fine) {
+
+    .game-wrap {
+        min-height: 100vh;
+        padding: 4px 0;
+        align-items: flex-start;
+    }
+
+    .game-panel {
+        zoom: 0.82;
+    }
+}
+
+@media (min-width: 821px) and (max-height: 780px) and (hover: hover) and (pointer: fine) {
+
+    .game-panel {
+        zoom: 0.72;
+    }
+}
+
+.music-credit {
+    margin: 12px 0 0;
+    color: rgba(60, 70, 55, 0.65);
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.music-credit {
+    margin-top: 12px;
+    color: rgba(45, 58, 40, 0.52);
+    font-size: 10px;
+    line-height: 1.5;
+    text-align: left;
+}

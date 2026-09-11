@@ -209,10 +209,10 @@ const CELL = 50;
 const EMPTY = 0;
 
 const START_DROP_INTERVAL =
-    600;
+    900;
 
 const MIN_DROP_INTERVAL =
-    235;
+    320;
 
 const DANGER_NORMAL =
     0;
@@ -2853,76 +2853,30 @@ function getDifficultyName() {
 
 
 function updateDifficulty() {
-
-    const seconds =
-        getElapsedSeconds();
-
+    const seconds = getElapsedSeconds();
     let interval;
 
-    if (
-        seconds < 60
-    ) {
-
-        interval =
-            600 -
-            seconds *
-            2;
-
-    } else if (
-        seconds < 100
-    ) {
-
-        interval =
-            460 -
-            (
-                seconds -
-                60
-            ) *
-            1.8;
-
+    if (seconds < 60) {
+        interval = 900 - seconds * 4;
+    } else if (seconds < 120) {
+        interval = 660 - (seconds - 60) * 2.5;
     } else {
-
-        interval =
-            390 -
-            (
-                seconds -
-                100
-            ) *
-            1.2;
+        interval = 510 - (seconds - 120) * 1.2;
     }
 
-    interval =
-        Math.max(
-            MIN_DROP_INTERVAL,
-            interval
-        );
+    interval = Math.max(MIN_DROP_INTERVAL, interval);
 
-    if (
-        dangerLevel ===
-        DANGER_CAUTION
-    ) {
-
-        interval *=
-            0.90;
+    if (dangerLevel === DANGER_CAUTION) {
+        interval *= 0.96;
     }
 
-    if (
-        dangerLevel ===
-        DANGER_HIGH
-    ) {
-
-        interval *=
-            0.78;
+    if (dangerLevel === DANGER_HIGH) {
+        interval *= 0.90;
     }
 
-    dropInterval =
-        Math.max(
-            230,
-            interval
-        );
+    dropInterval = Math.max(MIN_DROP_INTERVAL, interval);
 
     updateBgmPitch();
-
     playBgm();
 }
 
