@@ -984,3 +984,13 @@ html.ipad-mode .rotate-button {
         margin-top: 0 !important;
     }
 }
+
+
+@media (max-width: 820px) {
+    .game-title-image {
+        width: 150px;
+        max-width: 42vw;
+        height: auto;
+        margin: 0 auto;
+    }
+}

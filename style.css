@@ -3739,3 +3739,11 @@ body.fever-active .fever-block {
     height: auto;
     margin: 0 auto 12px;
 }
+
+.game-title-image {
+    display: block;
+    width: 220px;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+}
