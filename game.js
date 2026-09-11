@@ -5625,14 +5625,15 @@ if (blueskyShareBtn) {
     blueskyShareBtn.addEventListener("pointerdown", event => {
         event.preventDefault();
 
-        const gameUrl = "https://akamakimaki.github.io/ohagi-drop/";
+        const sharePageUrl =
+            `https://ohagi-drop.makimaki-feed.net/share?score=${score}`;
 
         const text = [
             `おはぎDROPで ${score.toLocaleString()}点！`,
             `🍃「腹いっぱいだァ…」`,
             "",
             "#おはぎDROP",
-            gameUrl
+            sharePageUrl
         ].join("\n");
 
         const shareUrl =
