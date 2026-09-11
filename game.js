@@ -5632,8 +5632,9 @@ if (blueskyShareBtn) {
             `おはぎDROPで ${score.toLocaleString()}点！`,
             `腹いっぱいだァ…`,
             "",
-            "#おはぎDROP",
-            sharePageUrl
+            sharePageUrl,
+            "",
+            "#おはぎDROP"
         ].join("\n");
 
         const shareUrl =
