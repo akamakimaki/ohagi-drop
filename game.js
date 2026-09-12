@@ -80,12 +80,6 @@ const restartBtn =
 
 const blueskyShareBtn = document.getElementById("blueskyShareBtn");
 
-const rankingOpenBtn =
-    document.getElementById("rankingOpenBtn");
-
-const rankingRegister =
-    document.getElementById("rankingRegister");
-
 const rankingScore =
     document.getElementById("rankingScore");
 
@@ -97,6 +91,12 @@ const rankingSubmitBtn =
 
 const rankingMessage =
     document.getElementById("rankingMessage");
+
+const personalHistoryBtn =
+    document.getElementById("personalHistoryBtn");
+
+
+
 
 const pausePanel =
     document.getElementById("pausePanel");
@@ -4023,6 +4023,7 @@ function triggerGameOver() {
         "hidden"
     );
 
+
     if (rankingScore) {
         rankingScore.textContent =
             score.toLocaleString();
@@ -4032,12 +4033,39 @@ function triggerGameOver() {
         rankingMessage.textContent = "";
     }
 
-    if (rankingRegister) {
-        rankingRegister.classList.add("hidden");
-    }
-
     if (rankingSubmitBtn) {
         rankingSubmitBtn.disabled = false;
+    }
+
+    // 自分のプレイ履歴をブラウザに保存
+    try {
+
+        const historyKey =
+            "ohagi_drop_play_history";
+
+        const savedHistory =
+            JSON.parse(
+                localStorage.getItem(historyKey) ||
+                "[]"
+            );
+
+        savedHistory.unshift({
+            score,
+            playedAt:
+                new Date().toISOString()
+        });
+
+        localStorage.setItem(
+            historyKey,
+            JSON.stringify(savedHistory)
+        );
+
+    } catch (error) {
+
+        console.error(
+            "プレイ履歴の保存に失敗しました",
+            error
+        );
     }
 
     pauseBgm();
@@ -5681,26 +5709,161 @@ if (blueskyShareBtn) {
 }
 
 
-if (rankingOpenBtn && rankingRegister) {
 
-    rankingOpenBtn.addEventListener(
-        "click",
-        () => {
 
-            rankingRegister.classList.toggle(
-                "hidden"
-            );
+const PRIVATE_SCORE_API =
+    "https://" +
+    "ohagi-ranking.makimaki-feed.net";
+
+
+async function getLoginStatus() {
+
+    const response =
+        await fetch(
+            PRIVATE_SCORE_API +
+            "/api/me",
+            {
+                credentials: "include"
+            }
+        );
+
+    return response.ok;
+}
+
+
+async function waitForBlueskyLogin(
+    loginWindow
+) {
+
+    for (
+        let count = 0;
+        count < 120;
+        count += 1
+    ) {
+
+        await new Promise(
+            resolve =>
+                setTimeout(
+                    resolve,
+                    1000
+                )
+        );
+
+        try {
 
             if (
-                !rankingRegister.classList.contains("hidden") &&
-                rankingName
+                await getLoginStatus()
             ) {
-                rankingName.focus();
+
+                if (
+                    loginWindow &&
+                    !loginWindow.closed
+                ) {
+                    loginWindow.close();
+                }
+
+                return true;
             }
+
+        } catch (error) {
+
+            console.error(error);
         }
+    }
+
+    return false;
+}
+
+
+async function ensureBlueskyLogin() {
+
+    try {
+
+        if (
+            await getLoginStatus()
+        ) {
+            return true;
+        }
+
+    } catch (error) {
+
+        console.error(error);
+    }
+
+    const handle =
+        rankingName
+            ? rankingName.value
+                .trim()
+                .replace(/^@/, "")
+            : "";
+
+    if (!handle) {
+
+        if (rankingMessage) {
+            rankingMessage.textContent =
+                "Blueskyハンドルを入力してください";
+        }
+
+        return false;
+    }
+
+    const loginUrl =
+        PRIVATE_SCORE_API +
+        "/login?handle=" +
+        encodeURIComponent(
+            handle
+        );
+
+    const loginWindow =
+        window.open(
+            loginUrl,
+            "ohagiBlueskyLogin",
+            "width=620,height=760"
+        );
+
+    if (!loginWindow) {
+
+        if (rankingMessage) {
+            rankingMessage.textContent =
+                "ログイン画面を開けませんでした";
+        }
+
+        return false;
+    }
+
+    if (rankingMessage) {
+        rankingMessage.textContent =
+            "Blueskyでログインしてください";
+    }
+
+    return await waitForBlueskyLogin(
+        loginWindow
     );
 }
 
+
+async function savePrivateScore() {
+
+    const response =
+        await fetch(
+            PRIVATE_SCORE_API +
+            "/api/my-scores",
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+                body: JSON.stringify({
+                    game: "drop",
+                    score
+                })
+            }
+        );
+
+    return response;
+}
 
 
 if (rankingSubmitBtn) {
@@ -5711,65 +5874,141 @@ if (rankingSubmitBtn) {
 
             event.preventDefault();
 
-            if (rankingSubmitBtn.disabled) {
+            if (
+                rankingSubmitBtn.disabled
+            ) {
                 return;
             }
 
-            const name =
-                rankingName
-                    ? rankingName.value.trim()
-                    : "";
-
-            rankingSubmitBtn.disabled = true;
+            rankingSubmitBtn.disabled =
+                true;
 
             if (rankingMessage) {
                 rankingMessage.textContent =
-                    "登録中...";
+                    "保存中...";
             }
 
             try {
 
+                const loggedIn =
+                    await ensureBlueskyLogin();
+
+                if (!loggedIn) {
+
+                    rankingSubmitBtn.disabled =
+                        false;
+
+                    return;
+                }
+
                 const response =
-                    await fetch(
-                        "https://" + "ohagi-ranking.makimaki-feed.net/api/scores",
-                        {
-                            method: "POST",
-                            headers: {
-                                "Content-Type": "application/json"
-                            },
-                            body: JSON.stringify({
-                                game: "drop",
-                                name,
-                                score
-                            })
-                        }
-                    );
+                    await savePrivateScore();
 
                 if (!response.ok) {
+
                     throw new Error(
-                        "ranking submit failed"
+                        "private score submit failed"
                     );
                 }
 
                 if (rankingMessage) {
                     rankingMessage.textContent =
-                        "ランキングに登録しました！";
+                        "自分の記録に保存しました！";
                 }
 
             } catch (error) {
 
                 console.error(error);
 
-                rankingSubmitBtn.disabled = false;
+                rankingSubmitBtn.disabled =
+                    false;
 
                 if (rankingMessage) {
                     rankingMessage.textContent =
-                        "登録に失敗しました";
+                        "保存に失敗しました";
                 }
             }
         }
     );
 }
+
+
+if (personalHistoryBtn) {
+
+    personalHistoryBtn.addEventListener(
+        "click",
+        async event => {
+
+            event.preventDefault();
+
+            try {
+
+                const loggedIn =
+                    await ensureBlueskyLogin();
+
+                if (!loggedIn) {
+                    return;
+                }
+
+                const response =
+                    await fetch(
+                        PRIVATE_SCORE_API +
+                        "/api/my-scores?game=drop",
+                        {
+                            credentials:
+                                "include"
+                        }
+                    );
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "private history failed"
+                    );
+                }
+
+                const data =
+                    await response.json();
+
+                if (
+                    !data.scores ||
+                    data.scores.length === 0
+                ) {
+
+                    alert(
+                        "まだ保存した記録がありません"
+                    );
+
+                    return;
+                }
+
+                const historyText =
+                    data.scores
+                        .slice(0, 20)
+                        .map(
+                            item =>
+                                `${item.score}点`
+                        )
+                        .join("\n");
+
+                alert(
+                    "自分の記録\n\n" +
+                    historyText
+                );
+
+            } catch (error) {
+
+                console.error(error);
+
+                if (rankingMessage) {
+                    rankingMessage.textContent =
+                        "記録の取得に失敗しました";
+                }
+            }
+        }
+    );
+}
+
 
 // ========================================
 // START

@@ -96,39 +96,26 @@
 
                         </div>
 
+
+
                         <div class="ranking-area">
 
-                            <div class="ranking-main-actions">
+                            <input id="rankingName" class="ranking-name-input" type="text" placeholder="Blueskyハンドル"
+                                maxlength="20">
 
-                                <button id="rankingOpenBtn" class="ranking-open-btn" type="button">
-                                    🏆 記録を残す
-                                </button>
+                            <button id="rankingSubmitBtn" class="ranking-submit-btn" type="button">
+                                この記録を登録
+                            </button>
 
-                                <a class="ranking-view-btn" href="https://ohagi-ranking.makimaki-feed.net/?game=drop"
-                                    target="_blank" rel="noopener noreferrer">
-                                    ランキングを見る
-                                </a>
+                            <button id="personalHistoryBtn" class="ranking-view-btn" type="button">
+                                自分の記録を見る
+                            </button>
 
-                            </div>
-
-                            <div id="rankingRegister" class="ranking-register hidden">
-
-                                <div class="ranking-name-label">
-                                    ランキングに表示する名前
-                                </div>
-
-                                <input id="rankingName" class="ranking-name-input" type="text" maxlength="20"
-                                    placeholder="空欄なら名無し" autocomplete="off">
-
-                                <button id="rankingSubmitBtn" class="ranking-submit-btn" type="button">
-                                    登録する
-                                </button>
-
-                                <div id="rankingMessage" class="ranking-message" aria-live="polite"></div>
-
-                            </div>
+                            <div id="rankingMessage" class="ranking-message"></div>
 
                         </div>
+
+
 
                         <button id="restartBtn" type="button">
                             もう一回
