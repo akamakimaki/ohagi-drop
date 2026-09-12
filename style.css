@@ -3676,9 +3676,209 @@ body.fever-active .fever-block {
     }
 }
 
-.bluesky-share-btn {
+
+/* ========================================
+   GAME OVER RESULT / RANKING
+======================================== */
+
+
+.result-score {
+    margin: -4px auto 18px;
+    text-align: center;
+}
+
+.result-score-label {
+    margin-bottom: 2px;
+    color: rgba(255, 255, 255, 0.68);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+.result-score-value {
+    color: #fff;
+    font-size: 40px;
+    font-weight: 900;
+    line-height: 1;
+    text-shadow:
+        0 3px 8px rgba(0, 0, 0, 0.28);
+}
+
+.result-score-unit {
+    margin-left: 3px;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.ranking-area {
+    width: min(100%, 280px);
+    margin: 0 auto 18px;
+    text-align: center;
+}
+
+.ranking-main-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.ranking-open-btn {
     width: 100%;
+    min-height: 44px;
+    padding: 10px 16px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: #7a9f68;
+    color: #fff;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 900;
+
+    box-shadow:
+        0 4px 0 rgba(62, 82, 52, 0.45);
+    cursor: pointer;
+}
+
+.ranking-open-btn:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 1px 0 rgba(126, 91, 35, 0.35);
+}
+
+.ranking-view-btn {
+    display: inline-block;
+
+    padding: 4px 8px;
+
+    color: rgba(255, 255, 255, 0.92);
+
+    font-size: 12px;
+    font-weight: 800;
+
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.ranking-register {
+    box-sizing: border-box;
+
     margin-top: 10px;
+    padding: 12px;
+
+    border-radius: 14px;
+
+    background: rgba(250, 247, 239, 0.96);
+    color: #40352d;
+
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.14);
+}
+
+.ranking-register.hidden {
+    display: none;
+}
+
+.ranking-name-label {
+    margin-bottom: 7px;
+
+    color: #66584e;
+
+    font-size: 11px;
+    font-weight: 800;
+    text-align: left;
+}
+
+.ranking-name-input {
+    box-sizing: border-box;
+
+    width: 100%;
+    min-height: 40px;
+
+    margin-bottom: 8px;
+    padding: 8px 10px;
+
+    border: 2px solid #ddd4cb;
+    border-radius: 10px;
+
+    background: #fff;
+    color: #332a24;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    outline: none;
+}
+
+.ranking-name-input:focus {
+    border-color: #d6a637;
+}
+
+.ranking-submit-btn {
+    width: 100%;
+    min-height: 40px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: #f3c14a;
+    color: #3e3329;
+
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 900;
+
+    cursor: pointer;
+}
+
+.ranking-submit-btn:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.ranking-message {
+    min-height: 0;
+    margin-top: 6px;
+
+    color: #66584e;
+
+    font-size: 11px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.game-over #restartBtn {
+    width: min(100%, 210px);
+
+    margin: 0 auto 10px;
+    padding: 10px 18px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: #f4efe4;
+    color: #493b31;
+
+    font-size: 14px;
+    font-weight: 900;
+
+    box-shadow:
+        0 3px 0 rgba(83, 65, 50, 0.22);
+}
+
+.game-over #restartBtn:active {
+    transform: translateY(2px);
+    box-shadow:
+        0 1px 0 rgba(83, 65, 50, 0.22);
+}
+
+
+.bluesky-share-btn {
+    width: min(100%, 210px);
+    margin: 0 auto;
     padding: 11px 14px;
     border: 0;
     border-radius: 999px;

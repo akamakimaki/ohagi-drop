@@ -969,6 +969,50 @@ html.ipad-mode .rotate-button {
         line-height: 1.25 !important;
     }
 
+
+    .result-score {
+        width: 100% !important;
+        margin: -4px 0 10px !important;
+    }
+
+    .result-score-value {
+        font-size: 30px !important;
+    }
+
+    .ranking-register {
+        box-sizing: border-box !important;
+
+        width: 100% !important;
+
+        margin: 0 0 10px !important;
+        padding: 12px !important;
+    }
+
+    .ranking-register-title {
+        font-size: 14px !important;
+    }
+
+    .ranking-register-note {
+        margin-bottom: 8px !important;
+        font-size: 10px !important;
+    }
+
+    .ranking-name-input,
+    .ranking-submit-btn {
+        width: 100% !important;
+        min-height: 42px !important;
+    }
+
+    .ranking-view-btn {
+        width: auto !important;
+        min-height: 0 !important;
+    }
+
+    .ranking-message {
+        font-size: 11px !important;
+    }
+
+
     #restartBtn,
     #blueskyShareBtn {
         display: block !important;

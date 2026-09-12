@@ -80,6 +80,24 @@ const restartBtn =
 
 const blueskyShareBtn = document.getElementById("blueskyShareBtn");
 
+const rankingOpenBtn =
+    document.getElementById("rankingOpenBtn");
+
+const rankingRegister =
+    document.getElementById("rankingRegister");
+
+const rankingScore =
+    document.getElementById("rankingScore");
+
+const rankingName =
+    document.getElementById("rankingName");
+
+const rankingSubmitBtn =
+    document.getElementById("rankingSubmitBtn");
+
+const rankingMessage =
+    document.getElementById("rankingMessage");
+
 const pausePanel =
     document.getElementById("pausePanel");
 
@@ -4005,6 +4023,23 @@ function triggerGameOver() {
         "hidden"
     );
 
+    if (rankingScore) {
+        rankingScore.textContent =
+            score.toLocaleString();
+    }
+
+    if (rankingMessage) {
+        rankingMessage.textContent = "";
+    }
+
+    if (rankingRegister) {
+        rankingRegister.classList.add("hidden");
+    }
+
+    if (rankingSubmitBtn) {
+        rankingSubmitBtn.disabled = false;
+    }
+
     pauseBgm();
 
     playGameOverSe();
@@ -5645,6 +5680,96 @@ if (blueskyShareBtn) {
     });
 }
 
+
+if (rankingOpenBtn && rankingRegister) {
+
+    rankingOpenBtn.addEventListener(
+        "click",
+        () => {
+
+            rankingRegister.classList.toggle(
+                "hidden"
+            );
+
+            if (
+                !rankingRegister.classList.contains("hidden") &&
+                rankingName
+            ) {
+                rankingName.focus();
+            }
+        }
+    );
+}
+
+
+
+if (rankingSubmitBtn) {
+
+    rankingSubmitBtn.addEventListener(
+        "click",
+        async event => {
+
+            event.preventDefault();
+
+            if (rankingSubmitBtn.disabled) {
+                return;
+            }
+
+            const name =
+                rankingName
+                    ? rankingName.value.trim()
+                    : "";
+
+            rankingSubmitBtn.disabled = true;
+
+            if (rankingMessage) {
+                rankingMessage.textContent =
+                    "登録中...";
+            }
+
+            try {
+
+                const response =
+                    await fetch(
+                        "https://" + "ohagi-ranking.makimaki-feed.net/api/scores",
+                        {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                game: "drop",
+                                name,
+                                score
+                            })
+                        }
+                    );
+
+                if (!response.ok) {
+                    throw new Error(
+                        "ranking submit failed"
+                    );
+                }
+
+                if (rankingMessage) {
+                    rankingMessage.textContent =
+                        "ランキングに登録しました！";
+                }
+
+            } catch (error) {
+
+                console.error(error);
+
+                rankingSubmitBtn.disabled = false;
+
+                if (rankingMessage) {
+                    rankingMessage.textContent =
+                        "登録に失敗しました";
+                }
+            }
+        }
+    );
+}
 
 // ========================================
 // START
