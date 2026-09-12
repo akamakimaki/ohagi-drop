@@ -5943,7 +5943,7 @@ if (personalHistoryBtn) {
 
             window.open(
                 "https://" +
-                "ohagi-ranking.makimaki-feed.net/?game=drop",
+                "ohagi-ranking.makimaki-feed.net/?game=drop&view=mine",
                 "_blank",
                 "noopener,noreferrer"
             );
