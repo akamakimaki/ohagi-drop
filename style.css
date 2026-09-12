@@ -3711,22 +3711,52 @@ body.fever-active .fever-block {
 }
 
 .ranking-area {
-    width: min(100%, 280px);
+    width: min(100%, 240px);
     margin: 0 auto 18px;
     text-align: center;
 }
 
-.ranking-main-actions {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
+
+
+
+
+.ranking-name-input {
+    box-sizing: border-box;
+
+    width: 100%;
+    height: 40px;
+
+    margin: 0 0 8px;
+    padding: 0 12px;
+
+    border: 0;
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.92);
+    color: #3b3029;
+
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+
+    text-align: center;
+
+    outline: none;
+
+    box-shadow:
+        inset 0 0 0 2px rgba(83, 65, 50, 0.12);
 }
 
-.ranking-open-btn {
+.ranking-name-input:focus {
+    box-shadow:
+        inset 0 0 0 2px #7a9f68;
+}
+
+.ranking-submit-btn {
     width: 100%;
-    min-height: 44px;
-    padding: 10px 16px;
+    height: 42px;
+
+    margin-bottom: 8px;
 
     border: 0;
     border-radius: 999px;
@@ -3735,117 +3765,55 @@ body.fever-active .fever-block {
     color: #fff;
 
     font-family: inherit;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 900;
 
-    box-shadow:
-        0 4px 0 rgba(62, 82, 52, 0.45);
     cursor: pointer;
+
+    box-shadow:
+        0 3px 0 rgba(62, 82, 52, 0.4);
 }
 
-.ranking-open-btn:active {
+.ranking-submit-btn:active {
     transform: translateY(2px);
+
     box-shadow:
-        0 1px 0 rgba(126, 91, 35, 0.35);
+        0 1px 0 rgba(62, 82, 52, 0.4);
+}
+
+.ranking-submit-btn:disabled {
+    opacity: 0.6;
+    cursor: default;
 }
 
 .ranking-view-btn {
     display: inline-block;
 
-    padding: 4px 8px;
+    margin: 0;
+    padding: 3px 6px;
+
+    border: 0;
+    background: transparent;
 
     color: rgba(255, 255, 255, 0.92);
 
-    font-size: 12px;
+    font-family: inherit;
+    font-size: 11px;
     font-weight: 800;
 
     text-decoration: underline;
     text-underline-offset: 3px;
-}
-
-.ranking-register {
-    box-sizing: border-box;
-
-    margin-top: 10px;
-    padding: 12px;
-
-    border-radius: 14px;
-
-    background: rgba(250, 247, 239, 0.96);
-    color: #40352d;
-
-    box-shadow:
-        0 4px 12px rgba(0, 0, 0, 0.14);
-}
-
-.ranking-register.hidden {
-    display: none;
-}
-
-.ranking-name-label {
-    margin-bottom: 7px;
-
-    color: #66584e;
-
-    font-size: 11px;
-    font-weight: 800;
-    text-align: left;
-}
-
-.ranking-name-input {
-    box-sizing: border-box;
-
-    width: 100%;
-    min-height: 40px;
-
-    margin-bottom: 8px;
-    padding: 8px 10px;
-
-    border: 2px solid #ddd4cb;
-    border-radius: 10px;
-
-    background: #fff;
-    color: #332a24;
-
-    font-family: inherit;
-    font-size: 13px;
-
-    outline: none;
-}
-
-.ranking-name-input:focus {
-    border-color: #d6a637;
-}
-
-.ranking-submit-btn {
-    width: 100%;
-    min-height: 40px;
-
-    border: 0;
-    border-radius: 999px;
-
-    background: #f3c14a;
-    color: #3e3329;
-
-    font-family: inherit;
-    font-size: 13px;
-    font-weight: 900;
 
     cursor: pointer;
 }
 
-.ranking-submit-btn:disabled {
-    opacity: 0.55;
-    cursor: default;
-}
-
 .ranking-message {
-    min-height: 0;
-    margin-top: 6px;
+    min-height: 14px;
+    margin-top: 5px;
 
-    color: #66584e;
+    color: rgba(255, 255, 255, 0.88);
 
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     text-align: center;
 }

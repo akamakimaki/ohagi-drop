@@ -5937,78 +5937,19 @@ if (personalHistoryBtn) {
 
     personalHistoryBtn.addEventListener(
         "click",
-        async event => {
+        event => {
 
             event.preventDefault();
 
-            try {
-
-                const loggedIn =
-                    await ensureBlueskyLogin();
-
-                if (!loggedIn) {
-                    return;
-                }
-
-                const response =
-                    await fetch(
-                        PRIVATE_SCORE_API +
-                        "/api/my-scores?game=drop",
-                        {
-                            credentials:
-                                "include"
-                        }
-                    );
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "private history failed"
-                    );
-                }
-
-                const data =
-                    await response.json();
-
-                if (
-                    !data.scores ||
-                    data.scores.length === 0
-                ) {
-
-                    alert(
-                        "まだ保存した記録がありません"
-                    );
-
-                    return;
-                }
-
-                const historyText =
-                    data.scores
-                        .slice(0, 20)
-                        .map(
-                            item =>
-                                `${item.score}点`
-                        )
-                        .join("\n");
-
-                alert(
-                    "自分の記録\n\n" +
-                    historyText
-                );
-
-            } catch (error) {
-
-                console.error(error);
-
-                if (rankingMessage) {
-                    rankingMessage.textContent =
-                        "記録の取得に失敗しました";
-                }
-            }
+            window.open(
+                "https://" +
+                "ohagi-ranking.makimaki-feed.net/?game=drop",
+                "_blank",
+                "noopener,noreferrer"
+            );
         }
     );
 }
-
 
 // ========================================
 // START
