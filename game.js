@@ -86,6 +86,9 @@ const rankingScore =
 const rankingName =
     document.getElementById("rankingName");
 
+const rankingLoginHint =
+    document.getElementById("rankingLoginHint");
+
 const rankingSubmitBtn =
     document.getElementById("rankingSubmitBtn");
 
@@ -4035,7 +4038,14 @@ function triggerGameOver() {
 
     if (rankingSubmitBtn) {
         rankingSubmitBtn.disabled = false;
+        rankingSubmitBtn.textContent =
+            "この記録を登録";
+        rankingSubmitBtn.classList.remove(
+            "is-saved"
+        );
     }
+
+    updateRankingLoginUI();
 
     // 自分のプレイ履歴をブラウザに保存
     try {
@@ -5716,6 +5726,7 @@ const PRIVATE_SCORE_API =
     "ohagi-ranking.makimaki-feed.net";
 
 
+
 async function getLoginStatus() {
 
     const response =
@@ -5730,6 +5741,39 @@ async function getLoginStatus() {
     return response.ok;
 }
 
+
+async function updateRankingLoginUI() {
+
+    try {
+
+        const loggedIn =
+            await getLoginStatus();
+
+        if (rankingName) {
+            rankingName.hidden =
+                loggedIn;
+        }
+
+        if (rankingLoginHint) {
+            rankingLoginHint.hidden =
+                loggedIn;
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+        if (rankingName) {
+            rankingName.hidden =
+                false;
+        }
+
+        if (rankingLoginHint) {
+            rankingLoginHint.hidden =
+                false;
+        }
+    }
+}
 
 async function waitForBlueskyLogin(
     loginWindow
@@ -5749,6 +5793,26 @@ async function waitForBlueskyLogin(
                 )
         );
 
+        if (
+            loginWindow &&
+            loginWindow.closed
+        ) {
+
+            try {
+
+                if (
+                    await getLoginStatus()
+                ) {
+                    return true;
+                }
+
+            } catch (error) {
+                console.error(error);
+            }
+
+            return false;
+        }
+
         try {
 
             if (
@@ -5766,7 +5830,6 @@ async function waitForBlueskyLogin(
             }
 
         } catch (error) {
-
             console.error(error);
         }
     }
@@ -5812,7 +5875,8 @@ async function ensureBlueskyLogin() {
         "/login?handle=" +
         encodeURIComponent(
             handle
-        );
+        ) +
+        "&game=drop";
 
     const loginWindow =
         window.open(
@@ -5883,9 +5947,12 @@ if (rankingSubmitBtn) {
             rankingSubmitBtn.disabled =
                 true;
 
+            rankingSubmitBtn.textContent =
+                "登録中…";
+
             if (rankingMessage) {
                 rankingMessage.textContent =
-                    "保存中...";
+                    "";
             }
 
             try {
@@ -5897,6 +5964,9 @@ if (rankingSubmitBtn) {
 
                     rankingSubmitBtn.disabled =
                         false;
+
+                    rankingSubmitBtn.textContent =
+                        "この記録を登録";
 
                     return;
                 }
@@ -5911,10 +5981,19 @@ if (rankingSubmitBtn) {
                     );
                 }
 
+                rankingSubmitBtn.textContent =
+                    "✓ 記録しました！";
+
+                rankingSubmitBtn.classList.add(
+                    "is-saved"
+                );
+
                 if (rankingMessage) {
                     rankingMessage.textContent =
                         "自分の記録に保存しました！";
                 }
+
+                updateRankingLoginUI();
 
             } catch (error) {
 
@@ -5922,6 +6001,9 @@ if (rankingSubmitBtn) {
 
                 rankingSubmitBtn.disabled =
                     false;
+
+                rankingSubmitBtn.textContent =
+                    "この記録を登録";
 
                 if (rankingMessage) {
                     rankingMessage.textContent =
