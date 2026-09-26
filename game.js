@@ -5934,82 +5934,16 @@ if (rankingSubmitBtn) {
 
     rankingSubmitBtn.addEventListener(
         "click",
-        async event => {
+        event => {
 
             event.preventDefault();
 
-            if (
-                rankingSubmitBtn.disabled
-            ) {
-                return;
-            }
+            const url =
+                PRIVATE_SCORE_API +
+                "/?game=drop&view=mine&score=" +
+                encodeURIComponent(score);
 
-            rankingSubmitBtn.disabled =
-                true;
-
-            rankingSubmitBtn.textContent =
-                "登録中…";
-
-            if (rankingMessage) {
-                rankingMessage.textContent =
-                    "";
-            }
-
-            try {
-
-                const loggedIn =
-                    await ensureBlueskyLogin();
-
-                if (!loggedIn) {
-
-                    rankingSubmitBtn.disabled =
-                        false;
-
-                    rankingSubmitBtn.textContent =
-                        "この記録を登録";
-
-                    return;
-                }
-
-                const response =
-                    await savePrivateScore();
-
-                if (!response.ok) {
-
-                    throw new Error(
-                        "private score submit failed"
-                    );
-                }
-
-                rankingSubmitBtn.textContent =
-                    "✓ 記録しました！";
-
-                rankingSubmitBtn.classList.add(
-                    "is-saved"
-                );
-
-                if (rankingMessage) {
-                    rankingMessage.textContent =
-                        "自分の記録に保存しました！";
-                }
-
-                updateRankingLoginUI();
-
-            } catch (error) {
-
-                console.error(error);
-
-                rankingSubmitBtn.disabled =
-                    false;
-
-                rankingSubmitBtn.textContent =
-                    "この記録を登録";
-
-                if (rankingMessage) {
-                    rankingMessage.textContent =
-                        "保存に失敗しました";
-                }
-            }
+            window.location.href = url;
         }
     );
 }
