@@ -228,6 +228,7 @@ const COLS = 6;
 const ROWS = 12;
 const CELL = 50;
 const EMPTY = 0;
+const ALL_CLEAR_BONUS = 2000;
 
 const START_DROP_INTERVAL =
     900;
@@ -2736,6 +2737,17 @@ async function resolveBoard() {
         );
     }
 
+    if (isBoardEmpty()) {
+        score += ALL_CLEAR_BONUS;
+
+        showEvent(
+            `✨ 食い切ったァ！ +${ALL_CLEAR_BONUS.toLocaleString()}`
+        );
+
+        bounceScore();
+        updateUI();
+    }
+
     updateDangerState();
 
     await maybeGiyuAttack();
@@ -2775,6 +2787,18 @@ async function resolveBoard() {
 // ========================================
 // GRAVITY
 // ========================================
+
+function isBoardEmpty() {
+    for (let y = 0; y < ROWS; y++) {
+        for (let x = 0; x < COLS; x++) {
+            if (board[y][x] !== EMPTY) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
 
 function applyGravity() {
 
