@@ -4051,6 +4051,8 @@ function triggerGameOver() {
     );
 
 
+    reportAnonymousPlay("drop", score);
+
     if (rankingScore) {
         rankingScore.textContent =
             score.toLocaleString();
@@ -5748,6 +5750,57 @@ if (blueskyShareBtn) {
 const PRIVATE_SCORE_API =
     "https://" +
     "ohagi-ranking.makimaki-feed.net";
+
+
+function createPlayEventId() {
+
+    if (
+        globalThis.crypto &&
+        typeof globalThis.crypto.randomUUID ===
+        "function"
+    ) {
+        return globalThis.crypto.randomUUID();
+    }
+
+    return (
+        Date.now().toString(36) +
+        "_" +
+        Math.random().toString(36).slice(2) +
+        "_" +
+        Math.random().toString(36).slice(2)
+    );
+}
+
+
+function reportAnonymousPlay(
+    game,
+    playScore
+) {
+
+    fetch(
+        PRIVATE_SCORE_API +
+        "/api/play-events",
+        {
+            method: "POST",
+            headers: {
+                "Content-Type":
+                    "application/json"
+            },
+            body: JSON.stringify({
+                event_id:
+                    createPlayEventId(),
+                game,
+                score: playScore
+            }),
+            keepalive: true
+        }
+    ).catch(error => {
+        console.warn(
+            "匿名プレイ統計を送信できませんでした",
+            error
+        );
+    });
+}
 
 
 
